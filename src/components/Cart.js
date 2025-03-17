@@ -5,7 +5,8 @@ function Cart({ cart, setCart, updateStock }) {
   const [isVisible, setIsVisible] = useState(true);
   const [payment, setPayment] = useState('');
   const [change, setChange] = useState(0);
-  
+  const [paymentMethod, setPaymentMethod] = useState('dinheiro'); // Add this line
+
   const removeFromCart = (productId) => {
     setCart(cart.filter(item => item.id !== productId));
   };
@@ -32,14 +33,15 @@ function Cart({ cart, setCart, updateStock }) {
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const changeAmount = payment - total;
     
-    if (changeAmount >= 0) {
+    if (paymentMethod !== 'dinheiro' || changeAmount >= 0) {
       const saleData = {
         id: Date.now(),
         date: new Date().toISOString(),
         items: cart,
         total: total,
         payment: Number(payment),
-        change: changeAmount
+        change: paymentMethod === 'dinheiro' ? changeAmount : 0,
+        paymentMethod // Add this line
       };
 
       const savedSales = JSON.parse(localStorage.getItem('sales')) || [];
@@ -253,21 +255,38 @@ function Cart({ cart, setCart, updateStock }) {
 
           <form onSubmit={handleCheckout} style={{
             display: 'flex',
-            gap: '1rem'
+            gap: '1rem',
+            flexWrap: 'wrap'
           }}>
-            <input
-              type="number"
-              value={payment}
-              onChange={(e) => setPayment(Number(e.target.value))}
-              placeholder="Valor pago"
-              step="0.01"
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
               style={{
-                flex: 1,
                 padding: '0.5rem',
                 borderRadius: '4px',
                 border: '1px solid #34495e'
               }}
-            />
+            >
+              <option value="dinheiro">Dinheiro</option>
+              <option value="pix">PIX</option>
+              <option value="cartao_credito">Cartão de Crédito</option>
+              <option value="cartao_debito">Cartão de Débito</option>
+            </select>
+            {paymentMethod === 'dinheiro' && (
+              <input
+                type="number"
+                value={payment}
+                onChange={(e) => setPayment(Number(e.target.value))}
+                placeholder="Valor pago"
+                step="0.01"
+                style={{
+                  flex: 1,
+                  padding: '0.5rem',
+                  borderRadius: '4px',
+                  border: '1px solid #34495e'
+                }}
+              />
+            )}
             <button 
               type="submit"
               style={{

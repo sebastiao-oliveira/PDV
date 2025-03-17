@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { printReceipt } from '../utils/receiptPrinter';
+import { viewReceipt } from '../utils/receiptPrinter';
 
 function SalesHistory() {
   const [sales, setSales] = useState([]);
@@ -56,6 +56,7 @@ function SalesHistory() {
             <th>Data</th>
             <th>Itens</th>
             <th>Total</th>
+            <th>Pagamento</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -66,8 +67,16 @@ function SalesHistory() {
               <td>{sale.items.length} itens</td>
               <td>R$ {sale.total.toFixed(2)}</td>
               <td>
-                <button onClick={() => printReceipt(sale)}>
-                  Reimprimir Recibo
+                {({
+                  'dinheiro': 'Dinheiro',
+                  'pix': 'PIX',
+                  'cartao_credito': 'Cartão de Crédito',
+                  'cartao_debito': 'Cartão de Débito'
+                })[sale.paymentMethod] || sale.paymentMethod}
+              </td>
+              <td>
+                <button onClick={() => viewReceipt(sale)}>
+                  Visualizar Recibo
                 </button>
               </td>
             </tr>

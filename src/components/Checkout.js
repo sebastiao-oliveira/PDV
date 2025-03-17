@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { printReceipt } from '../utils/receiptPrinter';
+import { viewReceipt } from '../utils/receiptPrinter';
 
 function Checkout({ cart, setCart, updateStock }) {
   const [payment, setPayment] = useState('');
@@ -25,7 +25,7 @@ function Checkout({ cart, setCart, updateStock }) {
       localStorage.setItem('sales', JSON.stringify([...savedSales, saleData]));
 
       updateStock(cart);
-      printReceipt(saleData);
+      viewReceipt(saleData);
       setCart([]);
       setPayment('');
       setChange(changeAmount);
